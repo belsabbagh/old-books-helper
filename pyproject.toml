@@ -1,0 +1,13 @@
+[project]
+name = "old-books-helper"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "isbntools>=4.3.29",
+    "pyqt6>=6.10.1",
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.5",
+    "setuptools>=80.9.0",
+]
