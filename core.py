@@ -1,11 +1,18 @@
 # pyright:strict
-import os
-from dotenv import load_dotenv
-import requests
 import csv
 import json
+import os
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+import re
+from typing import Any, Dict, List
+
+import pytesseract
+import requests
+from dotenv import load_dotenv
+from PIL import Image
+
+load_dotenv()
+api_key: str | None = os.environ.get("GOOGLE_BOOKS_API_KEY")
 
 
 def parse_single_column_csv(file_path: str) -> List[str]:
@@ -94,10 +101,6 @@ class BookDetails:
         return f"<BookDetails '{title_display}' by {authors_display} ({isbn_type}: {isbn_display})>"
 
 
-load_dotenv()
-api_key: str | None = os.environ.get("GOOGLE_BOOKS_API_KEY")
-
-
 def search_books(q: str) -> List[BookDetails]:
     if not api_key:
         print("Error: GOOGLE_BOOKS_API_KEY environment variable not set.")
@@ -137,7 +140,7 @@ def search_books(q: str) -> List[BookDetails]:
 
     except requests.exceptions.RequestException as e:
         # Catches network errors, DNS failure, and HTTP errors (4xx/5xx)
-        print(f"An error occurred during the API request: {e}")
+        print(f"An error occurred during the API request: {e.response.json()}")
         return []
     except json.JSONDecodeError:
         print("Error decoding JSON response.")
@@ -151,5 +154,24 @@ def search_by_isbn(isbn: str) -> List[BookDetails]:
     return search_books(f"isbn:{isbn}")
 
 
-def get_book_from_cover_image(img_path: str) -> Optional[BookDetails]:
-    pass
+def search_books_by_cover_image(img_path: str) -> List[BookDetails]:
+    # Correct path to tesseract.exe on your computer
+    # pytesseract.pytesseract.tesseract_cmd = (
+    #     r"C:\Users\gfg0753\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+    # )
+    img = Image.open(img_path).convert("L")
+    text = pytesseract.image_to_string(img)
+    if isinstance(text, str):
+        print(text.replace("\x0c", "").strip())
+        return search_books(text)
+    return []
+
+
+def read_text_from_image(img_path: str) -> str:
+    img = Image.open(img_path).convert("L")
+    text = pytesseract.image_to_string(img)
+    if isinstance(text, str):
+        text = "".join(re.findall(r"[a-zA-Z0-9\ \n]+", text)).replace("\n", " ")
+        print(text)
+        return text
+    return ""
