@@ -2,8 +2,9 @@
 import csv
 import json
 import os
-from dataclasses import dataclass
 import re
+import sys
+from dataclasses import dataclass
 from typing import Any, Dict, List
 
 import pytesseract
@@ -11,7 +12,20 @@ import requests
 from dotenv import load_dotenv
 from PIL import Image
 
-load_dotenv()
+# Get the path to the executable's directory
+if getattr(sys, "frozen", False):
+    # Running in a PyInstaller bundle
+    application_path = os.path.dirname(sys.executable)
+elif __file__:
+    # Running in a normal Python environment
+    application_path = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the full path to the .env file
+dotenv_path = os.path.join(application_path, ".env")
+
+# Load the .env file with the explicit path
+load_dotenv(dotenv_path=dotenv_path)
+
 api_key: str | None = os.environ.get("GOOGLE_BOOKS_API_KEY")
 
 

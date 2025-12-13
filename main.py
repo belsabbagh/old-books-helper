@@ -65,7 +65,7 @@ class IsbnWorker(QRunnable):
                 # 1. Report progress before the work starts
                 self.signals.progress.emit(i + 1, len(self.items), item)
 
-                foundList = search_books(item)
+                foundList = search_books(f"isbn:{item}")
 
                 if not foundList:
                     # Handle the case where the book is not found or error occurred
@@ -157,8 +157,8 @@ class MainWindow(QMainWindow):
         self.isbn_button = QPushButton("I have ISBN codes (CSV)")
         self.cover_button = QPushButton("I have book cover images (Files)")
 
-        self.isbn_button.clicked.connect(self.isbn_file_selection)
-        self.cover_button.clicked.connect(self.cover_image_file_selection)
+        self.isbn_button.clicked.connect(self.isbn_file_selection)  # type: ignore
+        self.cover_button.clicked.connect(self.cover_image_file_selection)  # type: ignore
 
         hbox_layout.addWidget(self.isbn_button)
         hbox_layout.addWidget(self.cover_button)
@@ -313,13 +313,13 @@ class MainWindow(QMainWindow):
         worker: IsbnWorker = IsbnWorker(items)
 
         # 3. Connect the worker's signals to the main thread's slots
-        worker.signals.progress.connect(self.worker_progress)
-        worker.signals.result.connect(self.worker_result)
-        worker.signals.error.connect(self.worker_error)
-        worker.signals.finished.connect(self.worker_finished)
+        worker.signals.progress.connect(self.worker_progress)  # type: ignore
+        worker.signals.result.connect(self.worker_result)  # type: ignore
+        worker.signals.error.connect(self.worker_error)  # type: ignore
+        worker.signals.finished.connect(self.worker_finished)  # type: ignore
 
         # 4. Start the worker using the QThreadPool
-        self.threadpool.start(worker)
+        self.threadpool.start(worker)  # type: ignore
 
     def cover_image_file_selection(self):
         self._enable_ui(False)
@@ -342,13 +342,13 @@ class MainWindow(QMainWindow):
         worker: CoverWorker = CoverWorker(items)
 
         # 3. Connect the worker's signals to the main thread's slots
-        worker.signals.progress.connect(self.worker_progress)
-        worker.signals.result.connect(self.worker_result)
-        worker.signals.error.connect(self.worker_error)
-        worker.signals.finished.connect(self.worker_finished)
+        worker.signals.progress.connect(self.worker_progress)  # type: ignore
+        worker.signals.result.connect(self.worker_result)  # type: ignore
+        worker.signals.error.connect(self.worker_error)  # type: ignore
+        worker.signals.finished.connect(self.worker_finished)  # type: ignore
 
         # 4. Start the worker using the QThreadPool
-        self.threadpool.start(worker)
+        self.threadpool.start(worker)  # type: ignore
 
 
 if __name__ == "__main__":
