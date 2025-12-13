@@ -310,7 +310,7 @@ class MainWindow(QMainWindow):
         # Clear previous results
         self.results: List[BookDetails] = []
 
-        worker = IsbnWorker(items)
+        worker: IsbnWorker = IsbnWorker(items)
 
         # 3. Connect the worker's signals to the main thread's slots
         worker.signals.progress.connect(self.worker_progress)
@@ -339,7 +339,7 @@ class MainWindow(QMainWindow):
         items = filenames
         self.results: List[BookDetails] = []
 
-        worker = CoverWorker(items)
+        worker: CoverWorker = CoverWorker(items)
 
         # 3. Connect the worker's signals to the main thread's slots
         worker.signals.progress.connect(self.worker_progress)

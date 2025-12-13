@@ -154,19 +154,6 @@ def search_by_isbn(isbn: str) -> List[BookDetails]:
     return search_books(f"isbn:{isbn}")
 
 
-def search_books_by_cover_image(img_path: str) -> List[BookDetails]:
-    # Correct path to tesseract.exe on your computer
-    # pytesseract.pytesseract.tesseract_cmd = (
-    #     r"C:\Users\gfg0753\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
-    # )
-    img = Image.open(img_path).convert("L")
-    text = pytesseract.image_to_string(img)
-    if isinstance(text, str):
-        print(text.replace("\x0c", "").strip())
-        return search_books(text)
-    return []
-
-
 def read_text_from_image(img_path: str) -> str:
     img = Image.open(img_path).convert("L")
     text = pytesseract.image_to_string(img)
