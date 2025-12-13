@@ -45,7 +45,7 @@ def parse_single_column_csv(file_path: str) -> List[str]:
 class BookDetails:
     """A data class to hold extracted book information."""
 
-    isbn: List[Dict[str, str]]
+    identifiers: List[Dict[str, str]]
     title: str
     authors: List[str]
 
@@ -76,7 +76,7 @@ class BookDetails:
         isbn_display = ""
         isbn_type = ""
         # The structure is List[Dict[str, str]], e.g., [{'type': 'ISBN_13', 'identifier': '978...'}, ...]
-        for isbn_entry in self.isbn:
+        for isbn_entry in self.identifiers:
             if isbn_entry.get("type") == "ISBN_13":
                 isbn_display = isbn_entry.get("identifier", "N/A")
                 isbn_type = "ISBN-13"
@@ -87,10 +87,10 @@ class BookDetails:
                 isbn_type = "ISBN-10"
 
         # Fallback if no specific ISBN was found
-        if not isbn_display and self.isbn:
+        if not isbn_display and self.identifiers:
             # Try to grab the first identifier if we couldn't find a type match
-            isbn_display = self.isbn[0].get("identifier", "N/A")
-            isbn_type = self.isbn[0].get("type", "ISBN")
+            isbn_display = self.identifiers[0].get("identifier", "N/A")
+            isbn_type = self.identifiers[0].get("type", "ISBN")
         elif not isbn_display:
             # If the list is empty
             isbn_display = "N/A"
@@ -131,7 +131,7 @@ def search_books(q: str) -> List[BookDetails]:
             volume_info = volume.get("volumeInfo", {})
             authors = volume_info.get("authors", ["N/A (Author Unknown)"])
             return BookDetails(
-                isbn=volume_info.get("industryIdentifiers") or [],
+                identifiers=volume_info.get("industryIdentifiers") or [],
                 title=volume_info.get("title", "N/A"),
                 authors=authors,
             )

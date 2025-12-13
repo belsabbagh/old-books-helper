@@ -3,7 +3,6 @@ from core import (
     parse_single_column_csv,
     read_text_from_image,
     search_books,
-    search_books_by_cover_image,
 )
 import time
 
