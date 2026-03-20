@@ -3,11 +3,13 @@ import csv
 import json
 import os
 import re
+import cv2
 import sys
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
-import pytesseract
+import keras_ocr
+from keras_ocr.tools import np
 import requests
 from dotenv import load_dotenv
 from PIL import Image
@@ -168,11 +170,13 @@ def search_by_isbn(isbn: str) -> List[BookDetails]:
     return search_books(f"isbn:{isbn}")
 
 
+pipeline: keras_ocr.pipeline.Pipeline = keras_ocr.pipeline.Pipeline()
+
+
 def read_text_from_image(img_path: str) -> str:
-    img = Image.open(img_path).convert("L")
-    text = pytesseract.image_to_string(img)
-    if isinstance(text, str):
-        text = "".join(re.findall(r"[a-zA-Z0-9\ \n]+", text)).replace("\n", " ")
-        print(text)
-        return text
-    return ""
+    img = cv2.imread(img_path)
+    predictions = pipeline.recognize([img])[0]
+    text = " ".join(i[0] for i in predictions)
+    text = "".join(re.findall(r"[a-zA-Z0-9\ \n]+", text)).replace("\n", " ")
+    print(text)
+    return text
